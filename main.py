@@ -23,7 +23,6 @@ def main():
     # Read data from csv file
     dataset_file = st.file_uploader("Upload your dataset file", type=["csv"])
     if (dataset_file is None):
-        st.info("Upload a file through config", icon="ℹ️")
         st.stop()
     df = pd.read_csv(dataset_file)
 
@@ -71,8 +70,9 @@ def main():
         option = st.selectbox("Choose model was trained to predict", selected_ml_algorithms)
         
         if st.button("Predict", type="secondary"):
-            result = predict(input_df, features, option)
-            st.write(result)
+            result = pd.DataFrame(predict(input_df, features, option), columns=["THANHLY"])
+            input_df = pd.concat([input_df, result], axis=1)
+            st.write(input_df)
 
 if __name__ == "__main__":
     main()

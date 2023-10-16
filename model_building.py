@@ -10,56 +10,18 @@ from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, classifi
 import pickle
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler
 
-# class Model():
-    
-#     # Tiền xử lý và mã hóa tập dữ liệu
-#     def preprocessing_data(data):
-#         for feature in data.columns:
-#             # mã hóa các cột có dữ liệu rời rạc
-#             if (data[feature].dtype == 'object'):
-#                 dummy = pd.get_dummies(data[feature], prefix=feature)
-#                 data = pd.concat([data, dummy], axis=1)
-#                 del data[feature]
-#             # chuẩn hóa các cột có dữ liệu liên tục
-#             elif (data[feature].dtype == 'int64'):
-#                 scaler = MinMaxScaler()
-#                 data[feature] = scaler.fit_transform(data[[feature]])
-#         return data
-    
-#     def classifier_model(X, y, ml_algorithm):
-#         classifier_algorithms = {
-#             "K Nearest Neighbors": KNeighborsClassifier(), 
-#             "Decision Tree": DecisionTreeClassifier(max_depth=4, random_state=0), 
-#             "Random Forest": RandomForestClassifier(n_estimators=10, random_state=0), 
-#             "Logistic Regression": LogisticRegression(random_state=0),
-#         }
-#         model = classifier_algorithms[ml_algorithm]
-#         model.fit(np.array(X), y)
-#         pickle.dump(model, open(f"{ml_algorithm}.pkl", 'wb'))
-#         scoring = ("accuracy", "f1_micro")
-#         k_fold = KFold(n_splits=10, random_state=0, shuffle=True)
-#         scores = cross_validate(model, np.array(X), y, scoring=scoring, cv=k_fold)
-#         accuracy = sum(scores['test_accuracy']) / len(scores['test_accuracy'])
-#         f1 = sum(scores['test_f1_micro']) / len(scores['test_f1_micro'])
-#         return (round(accuracy, 3), round(f1, 3))
-    
-#     def predict(self, input_data, features, ml_algorithm):
-#         encoded_input_data = self.preprocessing_data(input_data.loc[:, features])
-#         model = pickle.load(open(f"{ml_algorithm}.pkl", 'rb'))
-#         return model.predict(encoded_input_data)
-
 def preprocessing_data(data):
-        for feature in data.columns:
-            # mã hóa các cột có dữ liệu rời rạc
-            if (data[feature].dtype == 'object'):
-                dummy = pd.get_dummies(data[feature], prefix=feature)
-                data = pd.concat([data, dummy], axis=1)
-                del data[feature]
-            # chuẩn hóa các cột có dữ liệu liên tục
-            elif (data[feature].dtype == 'int64'):
-                scaler = MinMaxScaler()
-                data[feature] = scaler.fit_transform(data[[feature]])
-        return data
+    for feature in data.columns:
+        # mã hóa các cột có dữ liệu rời rạc
+        if (data[feature].dtype == 'object'):
+            dummy = pd.get_dummies(data[feature], prefix=feature)
+            data = pd.concat([data, dummy], axis=1)
+            del data[feature]
+        # chuẩn hóa các cột có dữ liệu liên tục
+        elif (data[feature].dtype == 'int64'):
+            scaler = MinMaxScaler()
+            data[feature] = scaler.fit_transform(data[[feature]])
+    return data
     
 def classifier_model(X, y, ml_algorithm):
     classifier_algorithms = {
