@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from model_building import preprocessing_data, classifier_model, predict
+from model_building import preprocessing_data, preprocessing_test_data, classifier_model, predict
 
 st.set_page_config(
     page_title="Churn prediction",
@@ -70,8 +70,10 @@ def main():
         option = st.selectbox("Choose model was trained to predict", selected_ml_algorithms)
         
         if st.button("Predict", type="secondary"):
-            result = pd.DataFrame(predict(input_df, features, option), columns=["THANHLY"])
-            input_df = pd.concat([input_df, result], axis=1)
+            temp = input_df.loc[:, features]
+            temp = preprocessing_test_data(temp, X.loc[:, features])
+            result = pd.DataFrame(predict(temp, option), columns=["THANHLY"])
+            input_df = pd.concat([input_df.loc[:, features], result], axis=1)
             st.write(input_df)
 
 if __name__ == "__main__":
