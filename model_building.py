@@ -12,17 +12,18 @@ from imblearn.over_sampling import SMOTE
 
 # tiền xử lý tập dữ liệu huấn luyện
 def preprocessing_data(data):
-    for feature in data.columns:
+    df = data
+    for feature in df.columns:
         # mã hóa các cột có dữ liệu rời rạc
-        if (data[feature].dtype == 'object'):
-            dummy = pd.get_dummies(data[feature], prefix=feature)
-            data = pd.concat([data, dummy], axis=1)
-            del data[feature]
+        if (df[feature].dtype == 'object'):
+            dummy = pd.get_dummies(df[feature], prefix=feature)
+            df = pd.concat([df, dummy], axis=1)
+            del df[feature]
         # chuẩn hóa các cột có dữ liệu liên tục
-        elif (data[feature].dtype == 'int64'):
+        elif (df[feature].dtype == 'int64'):
             scaler = MinMaxScaler()
-            data[feature] = scaler.fit_transform(data[[feature]])
-    return data
+            df[feature] = scaler.fit_transform(df[[feature]])
+    return df
 
 # tiền xử lý tập dữ liệu kiểm tra
 def preprocessing_test_data(data, train_data):
@@ -45,10 +46,10 @@ def preprocessing_test_data(data, train_data):
 # huấn luyện mô hình phân lớp
 def classifier_model(X, y, ml_algorithm):
     classifier_algorithms = {
-        "K Nearest Neighbors": KNeighborsClassifier(), 
-        "Decision Tree": DecisionTreeClassifier(max_depth=4, random_state=1), 
-        "Random Forest": RandomForestClassifier(n_estimators=100, random_state=1, max_depth=4), 
-        "Logistic Regression": LogisticRegression(random_state=1),
+        "K Nearest Neighbors": KNeighborsClassifier(n_neighbors=7),
+        "Decision Tree": DecisionTreeClassifier(criterion="entropy", random_state=42), 
+        "Random Forest": RandomForestClassifier(n_estimators=50, random_state=42), 
+        "Logistic Regression": LogisticRegression(random_state=42),
     }
     
     # lấy mẫu SMOTE nhằm cân bằng tập dữ liệu
@@ -63,7 +64,7 @@ def classifier_model(X, y, ml_algorithm):
     
     # đánh giá mô hình
     scoring = ("accuracy", "f1")
-    k_fold = KFold(n_splits=10, random_state=0, shuffle=True)
+    k_fold = KFold(n_splits=10, random_state=1, shuffle=True)
     scores = cross_validate(model, np.array(X_smote), y_smote, scoring=scoring, cv=k_fold)
     accuracy = sum(scores['test_accuracy']) / len(scores['test_accuracy'])
     f1 = sum(scores['test_f1']) / len(scores['test_f1'])
